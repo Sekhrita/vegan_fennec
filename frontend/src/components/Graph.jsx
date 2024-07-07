@@ -15,8 +15,9 @@ const Graph = () => {
         if (startDate && endDate) {
             axios.get(`http://localhost:8000/vegan_fennec/influxdata/?start_date=${(new Date(startDate)).toISOString()}&end_date=${(new Date(endDate)).toISOString()}`)
                 .then(response => {
-                    setData(response.data);
-                    const uniqueFields = [...new Set(response.data.map(item => item.field))];
+                    const fetchedData = response.data.data;
+                    setData(fetchedData);
+                    const uniqueFields = [...new Set(fetchedData.map(item => item.field))];
                     setFields(uniqueFields);
                 })
                 .catch(error => {
@@ -26,8 +27,10 @@ const Graph = () => {
     };
 
     useEffect(() => {
-        fetchData();
-    }, []);
+        if (startDate && endDate) {
+            fetchData();
+        }
+    }, [startDate, endDate]);
 
     const handleFieldChange = (id, value) => {
         setSelectedFields(prevSelectedFields => 
